@@ -1,4 +1,4 @@
-=== Font Customizer ===
+﻿=== Font Customizer ===
 Contributors: nikeo
 Author URI: http://www.themesandco.com
 Plugin URI: http://www.themesandco.com
@@ -24,7 +24,7 @@ All settings are done from the WordPress customizer in live preview [(screenshot
 * **Live preview is integrated into the WordPress Customizer with a beautiful user interface**
 * Customize main body font, links, headings, blockquotes
 * Select among 650 + Google and websafe fonts in live preview
-* Apply 40+ CSS3 effect like 3D, shadows, emboss, outile, neons...
+* Apply 40+ CSS3 effect like 3D, shadows, emboss, outline, neons...
 * Style CSS properties : color, hover color, font size, line height, font weight...
 * Reset controls to default settings (one by one or all at once)
 
