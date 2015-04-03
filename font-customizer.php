@@ -2,9 +2,9 @@
 /**
  * Plugin Name: Font Customizer
  * Description: Play with beautiful fonts, live from the WordPress Customizer.
- * Version: 1.0
+ * Version: 1.1.0
  * Author: nikeo
- * Author URI: http://themesandco.com
+ * Author URI: http://presscustomizr.com
  * License: GPLv2 or later
  */
 
@@ -12,7 +12,8 @@
 * Fires the plugin
 * @author Nicolas GUILLAUME
 * @since 1.0
-*/
+ */
+if ( ! class_exists('TC_font_customizer') ):
 class TC_font_customizer {
       static $instance;
       public $version;
@@ -27,26 +28,36 @@ class TC_font_customizer {
       //public $tc_selector_list;
       public $tc_skin_colors;
       public $setting_prefix = 'tc_font_customizer_plug';
+
+      private $wfc_active;
+
       public $is_customizing;
 
       function __construct () {
             self::$instance =& $this;
 
-            //USEFUL CONSTANTS
-            if( ! defined( 'TC_PLUG_DIR_NAME' ) )      { define( 'TC_PLUG_DIR_NAME' , basename( dirname( __FILE__ ) ) ); }
-
-            /* LICENSE AND UPDATES */
-            // the name of your product. This should match the download name in EDD exactly
             $this -> plug_name            = 'Font Customizer';
             $this -> plug_file            = __FILE__; //main plugin root file.
             $this -> plug_prefix          = 'font_customizer';
-            $this -> plug_version         = '1.0';
+            $this -> plug_version         = '1.1';
             $this -> plug_lang            = 'tc_font_customizer';
-            
+
             //gets the theme name (or parent if child)
             $tc_theme                     = wp_get_theme();
             self::$theme_name             = $tc_theme -> parent() ? $tc_theme -> parent() -> Name : $tc_theme-> Name;
             self::$theme_name             = sanitize_file_name( strtolower(self::$theme_name) );
+            // check if WFC active
+            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+            $this -> wfc_active = is_plugin_active('wordpress-font-customizer/wordpress-font-customizer.php');
+            //check if theme is customizr pro and plugin mode (did_action not triggered yet)
+            if ( 'customizr-pro' == self::$theme_name || $this -> wfc_active ) {
+                add_action( 'admin_notices', array( $this , 'tc_fc_admin_notice' ) );
+                return;
+            }
+
+            //USEFUL CONSTANTS
+            if( ! defined( 'TC_FCZ_DIR_NAME' ) )      { define( 'TC_FCZ_DIR_NAME' , basename( dirname( __FILE__ ) ) ); }
+            if( ! defined( 'TC_FCZ_BASE_URL' ) )      { define( 'TC_FCZ_BASE_URL' , plugins_url( TC_FCZ_DIR_NAME ) ); }
 
             //define the plug option key
             $this -> plug_option_prefix     = 'tc_wfc';
@@ -62,7 +73,7 @@ class TC_font_customizer {
                   'grey.css'        =>  array('#5A5A5A','#343434'),//gray
                   'black.css'       =>  array('#000','#000'),//black
             );
-            
+
             $plug_classes = array(
                   //the admin notices
                   'TC_utils_wfc'                  => array('/utils/classes/class_utils_wfc.php'),
@@ -92,7 +103,7 @@ class TC_font_customizer {
                   if( !class_exists( $name ) )
                       require_once ( dirname( __FILE__ ) . $params[0] );
 
-                  $args = isset( $params[1] ) ? $params[1] : null; 
+                  $args = isset( $params[1] ) ? $params[1] : null;
                   if ( $name !=  'TC_plug_updater' )
                       new $name( $args );
             }
@@ -103,7 +114,6 @@ class TC_font_customizer {
 
             //on theme switch update saved options
             add_action( 'after_switch_theme'                      , array( $this , 'tc_update_saved_options' ) );
-            add_action( 'after_switch_theme'                      , array( $this , 'tc_update_default_theme_selectors' ) );
 
 
             //activation : delete the setting option
@@ -114,7 +124,7 @@ class TC_font_customizer {
 
             //uninstall : clean database options
             register_uninstall_hook( __FILE__               , array( __CLASS__ , 'tc_wfc_clean_db' ) );
-           
+
       }//end of construct
 
 
@@ -139,7 +149,7 @@ class TC_font_customizer {
 
       //declares the plugin translation domain
       function tc_plugin_lang() {
-            load_plugin_textdomain( $this -> plug_lang , false, basename( dirname( __FILE__ ) ) . '/lang' );
+            load_plugin_textdomain( $this -> plug_lang , false, TC_FCZ_DIR_NAME . '/lang' );
       }
 
 
@@ -185,26 +195,15 @@ class TC_font_customizer {
 
 
 
-      function tc_update_default_theme_selectors() {
-            $theme_name       = self::$theme_name;
-            if ( get_option( "tc_font_customizer_selectors_{$theme_name}" ) ) {
-                  delete_option( "tc_font_customizer_selectors_{$theme_name}" );
-                  $this -> tc_get_selector_list( $return_it = false );
-            }
-      }
-
-
-
-      function tc_get_selector_list( $return_it = true ) {
+      function tc_get_selector_list() {
             $theme_name       = self::$theme_name;
             $path             = dirname( __FILE__).'/sets/';
             //first check if option exists and get it, else create/update option
-            if ( get_option("tc_font_customizer_selectors_{$theme_name}" ) ) {
+            if ( get_option("tc_font_customizer_selectors_{$theme_name}" ) && ! isset( $_GET['wfc-refresh-selector'] ) &&  1 == get_transient('wfc_refresh_selectors') ) {
                   //html_entity_decode for selector => fixes characters (unrecognized expression) issue in javascript
                   $_to_return  = apply_filters( "tc_default_selectors_{$theme_name}" , get_option("tc_font_customizer_selectors_{$theme_name}" ) );
                   $_to_return  = $this -> _clean_selector_css($_to_return);
-                  if ( $return_it )
-                        return $_to_return;
+                  return $_to_return;
             }
 
             $default_selector_settings       = file_exists("{$path}{$theme_name}.json") ? @file_get_contents( "{$path}{$theme_name}.json" ) : @file_get_contents( "{$path}default.json" );
@@ -234,15 +233,18 @@ class TC_font_customizer {
                                     $selector_list[$sel][$prop]    = ( 0 === $value ) ? $property_list[$prop] : $value;
                               break;
                         }
-                        
+
                  }
             }
             update_option( "tc_font_customizer_selectors_{$theme_name}", $selector_list );
              //html_entity_decode for selector => fixes characters (unrecognized expression) issue in javascript
             $_to_return  = apply_filters("tc_default_selectors_{$theme_name}" , $selector_list);
             $_to_return  = $this -> _clean_selector_css($_to_return);
-            if ( $return_it )
-                        return $_to_return;
+
+            //update refresh transient for 24 hours
+            set_transient('wfc_refresh_selectors' , 1 , 60*60*24 );
+
+            return $_to_return;
       }
 
 
@@ -250,6 +252,7 @@ class TC_font_customizer {
       function tc_update_saved_options( $return = false ) {
             $default_options    = $this -> tc_get_selector_list();
             $saved_options      = array( 'settings' => array() , 'bools' => array() );
+            $_opt_prefix        = $this -> plug_option_prefix;
             foreach( $default_options as $selector => $settings ) {
                   //settings
                   $set_raw                                    = (array)json_decode(apply_filters( '__get_wfc_option'  , $selector , 'tc_font_customizer_plug' ));
@@ -263,20 +266,21 @@ class TC_font_customizer {
                   $saved_options['bools']['hassavedsets']     = $saved_options['bools'][$selector] ? true : $saved_options['bools']['hassavedsets'];
             }//end foreach
 
-            update_option("tc_wfc_saved_options" , $saved_options );
+            update_option("{$_opt_prefix}_saved_options" , $saved_options );
 
             if ( true == $return )
                   return $saved_options;
       }
 
 
-      
+
       function tc_get_saved_option( $selector_in_key = null , $bool = false ) {
-            $saved = array();
+            $_opt_prefix  = $this -> plug_option_prefix;
+            $saved        = array();
             if ( $this -> is_customizing || is_admin() )
                   $saved = $this -> tc_update_saved_options( $return = true );
             else
-                  $saved = get_option( "tc_wfc_saved_options" ) ? get_option("tc_wfc_saved_options" ) : $this -> tc_update_saved_options( $return = true );
+                  $saved = get_option( "{$_opt_prefix}_saved_options" ) ? get_option("{$_opt_prefix}_saved_options" ) : $this -> tc_update_saved_options( $return = true );
 
             if ( 'selector_in_key' == $selector_in_key ) {
                   foreach ( $saved['settings'] as $selector => $settings ) {
@@ -345,10 +349,39 @@ class TC_font_customizer {
             update_option( TC_font_customizer::$instance -> plug_option_prefix , $plug_options );
       }
 
+      function tc_fc_admin_notice() {
+            $what = $this -> wfc_active ?
+                __( 'in Wordpress Font Customizer plugin', $this -> plug_lang ) :
+                __( 'in this theme' , $this -> plug_lang ) ;
+
+            $where = '';
+            global $pagenow;
+            if ( ! ( is_admin() && isset( $pagenow ) && 'plugins.php' == $pagenow ) )
+                $where = sprintf(__(' Open the <a href="%s">plugins page</a> to deactivate it.', $this -> plug_lang),
+                             admin_url('plugins.php')
+                         );
+
+          ?>
+            <div class="error">
+              <p>
+                <?php
+                    printf( __( 'The <strong>%s</strong> plugin must be disabled since it is included %s.%s' , $this -> plug_lang ),
+                        $this -> plug_name,
+                        $what,
+                        $where
+                    );
+                ?>
+              </p>
+            </div>
+          <?php
+      }
+
 }//end of class
 
 //Creates a new instance of front and admin
 new TC_font_customizer;
+
+endif;
 /**
 * The tc__f() function is an extension of WP built-in apply_filters() where the $value param becomes optional.
 * It is shorter than the original apply_filters() and only used on already defined filters.

@@ -8,15 +8,39 @@ class TC_dyn_style {
     
     //Access any method or var of the class with classname::$instance -> var or method():
     static $instance;
+    public $raw_settings;
 
     function __construct () {
         self::$instance =& $this;
         add_action( '__dyn_style'                , array( $this , 'tc_render_dyn_style' ) , 10 , 1 );
+        //FIX FOR THE CUSTOMIZR MENU ITEMS
+        add_action( '__dyn_style'                , array( $this , 'tc_additional_styles' ) , 20 );
+
+        $this -> raw_settings = TC_font_customizer::$instance -> tc_get_raw_option();
     }
 
+    /*
+    * @since v1.1
+    * Fixes a default Customizr style for the menu items first letter
+    */
+    function tc_additional_styles() {
+        if ( 'customizr' != TC_font_customizer::$theme_name )
+            return;
+        
+        $_raw = $this -> raw_settings;
+        if ( isset($_raw['menu_items']) && !empty($_raw['menu_items']) )
+            //Disable the first letter default Customizr setting
+            printf( '%1$s%2$s {%3$s}%4$s',
+                "/* Menu items first letter fix */ \n",
+                '.navbar .nav>li>a:first-letter',
+                "font-size: inherit;",
+                "\n\n"
+            );
+
+    }
 
     function tc_render_dyn_style( $what = null ) {
-        $raw_settings                   = TC_font_customizer::$instance -> tc_get_raw_option();
+        $raw_settings                   = $this -> raw_settings;
         $default_settings               = TC_font_customizer::$instance -> tc_get_selector_list();
         $merged_settings_with_selector  = TC_font_customizer::$instance -> tc_get_saved_option( 'selector_in_key' , false );
         

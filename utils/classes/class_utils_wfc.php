@@ -28,7 +28,7 @@ class TC_utils_wfc {
 		//get single option
         add_filter  ( '__get_wfc_option'                    , array( $this , 'wfc_get_option' ), 10, 2 );
         $this -> tc_selector_title_map 	= $this -> tc_get_selector_title_map();
-        $this -> is_customizing   		= TC_font_customizer::$instance -> tc_is_customizing();
+        $this -> is_customizing   		= TC_font_customizer::$instance -> is_customizing;
         $this -> default_options  		= $this -> tc_get_default_options();
         $this -> plug_lang 		  		= TC_font_customizer::$instance -> plug_lang;
 	}//end of construct
@@ -191,12 +191,13 @@ class TC_utils_wfc {
         	)//end of array
 		);//end of filter
 		
-		$theme_name 				= TC_font_customizer::$theme_name;
+        $theme_name 				= TC_font_customizer::$theme_name;
+        $_opt_prefix                = TC_font_customizer::$instance -> plug_option_prefix;
 		//returns default if no customs
-		if ( ! get_option( "tc_wfc_customs_{$theme_name}" ) )
+		if ( ! get_option( "{$_opt_prefix}_customs_{$theme_name}" ) )
 			return $default_map;
 
-		$customs 					= get_option( "tc_wfc_customs_{$theme_name}" );
+		$customs 					= get_option( "{$_opt_prefix}_customs_{$theme_name}" );
 		$custom_map 				= array();
 		foreach ($customs as $id => $data) {
 			$custom_map[$id] 		= isset($data['title']) ? $data['title'] : $id;
@@ -317,7 +318,8 @@ class TC_utils_wfc {
 	function tc_update_front_end_gfonts() {
 		$saved 				= TC_font_customizer::$instance -> tc_get_saved_option( null , false );
 		$front_end_gfonts 	= array();
-		
+        $_opt_prefix        = TC_font_customizer::$instance -> plug_option_prefix;
+
 		//extract the gfont list
 		foreach (TC_font_customizer::$instance -> tc_get_selector_list() as $key => $value) {
 			$setting		= $saved[$key];
@@ -356,7 +358,7 @@ class TC_utils_wfc {
         if ( ! empty($subsets) ) {
             $families = $families . '&subset=' . implode( ',' , $subsets );
         }
-		update_option( 'tc_wfc_gfonts' , $families );
+		update_option( "{$_opt_prefix}_gfonts" , $families );
 	}
 
 }//end of class

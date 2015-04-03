@@ -1,12 +1,12 @@
-﻿=== Font Customizer ===
+=== Font Customizer ===
 Contributors: nikeo
-Author URI: http://www.themesandco.com
-Plugin URI: http://www.themesandco.com
-Donate link: http://www.themesandco.com#footer
+Author URI: http://presscustomizr.com
+Plugin URI: http://presscustomizr.com
+Donate link: http://presscustomizr.com#footer
 Tags: Google font, font, typography, WordPress customizer, WordPress, WordPress fonts
 Requires at least: 3.4
-Tested up to: 3.9.1
-Stable tag: 1.0
+Tested up to: 4.1.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ All settings are done from the WordPress customizer in live preview [(screenshot
 * **Live preview is integrated into the WordPress Customizer with a beautiful user interface**
 * Customize main body font, links, headings, blockquotes
 * Select among 650 + Google and websafe fonts in live preview
-* Apply 40+ CSS3 effect like 3D, shadows, emboss, outline, neons...
+* Apply 40+ CSS3 effect like 3D, shadows, emboss, outile, neons...
 * Style CSS properties : color, hover color, font size, line height, font weight...
 * Reset controls to default settings (one by one or all at once)
 
@@ -121,6 +121,26 @@ This plugin offers a **modular structure based on a comprehensive hook’s API**
 
 
 == Changelog ==
+= 1.1.0 : April 3rd, 2015 =
+* Fix: amend typos in admin when enqueing stepper resources
+* Fix: update font-customizer.php -> use transients
+* Fix: update font-customizer-preview
+* Back css update fs-sprite.png path
+* Fix: add wfc_ready_upgrade.js
+* Fix: font-customizer-control js and css update (some fix for the not used  custom control section)
+* Fix: use correct constant when enqueing font-customizer-preview.min.js
+* Fix: update class_utils_wfc.php
+* Fix: update front font_customizer(.min).css
+* Fix: update class_dyn_style.php
+* Fix: update class_front_font_customizer, register and enqueue jquery if necessary
+* Fix: update css fonts
+* Fix: move back imgs
+* Fix: jquery plugin css final split
+* Fix: update require.js
+* Fix: jquery plugin js initial split
+* Fix: jquery plugin css initial split
+* Fix: use constant dirname for lang path
+* Fix: polishing class_admin_font_customizer
 
 = 1.0 : July 1, 2014 =
 * First offical release!

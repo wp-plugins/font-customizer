@@ -414,8 +414,8 @@ class TC_admin_font_customizer {
 	 */
 	function tc_plugin_preview_js() {
 		wp_enqueue_script( 
-			'font-customizer-preview' ,
-			plugins_url( TC_PLUG_DIR_NAME . '/back/assets/js/font-customizer-preview.min.js' ) ,
+            'font-customizer-preview' ,
+            sprintf('%1$s/back/assets/js/font-customizer-preview.min.js', TC_FCZ_BASE_URL ),
 			array( 'customize-preview' ),
 			null ,
 			true );
@@ -443,26 +443,82 @@ class TC_admin_font_customizer {
 
 		wp_enqueue_style( 
 			'font-customizer-fontselect-style' ,
-			plugins_url( TC_PLUG_DIR_NAME . '/back/assets/css/fontselect.min.css') ,
+			sprintf('%1$s/back/assets/css/fontselect.min.css', TC_FCZ_BASE_URL),
 			array( 'customize-controls' ),
-			null,
-			$media = 'all'
-		);
+            ( defined('WP_DEBUG') && true === WP_DEBUG ) ? time() : TC_font_customizer::$instance -> plug_version,			
+            $media = 'all'
+        );
+
+        //loads the jquery plugins assets when is (OR):
+        //1) customizr version < 3.2.5 
+        //2) any other theme ( when customizr-pro this plugin isn't loaded )
+        if ( 'customizr' == TC_font_customizer::$theme_name && version_compare( CUSTOMIZR_VER, '3.2.5', '<' ) || 'customizr' != TC_font_customizer::$theme_name ){
+            //ICHECK
+            wp_enqueue_style(
+                'fcz-icheck-style',
+                sprintf('%1$s/back/assets/css/icheck.min.css' , TC_FCZ_BASE_URL ),
+                array( 'customize-controls' ),
+                TC_font_customizer::$instance -> plug_version,
+                $media = 'all'
+            );
+            wp_enqueue_script(
+                'icheck-script',
+                //dev / debug mode mode?
+                sprintf('%1$s/back/assets/js/lib/lib_icheck.js' , TC_FCZ_BASE_URL ),
+                $deps = array('jquery'),
+                TC_font_customizer::$instance -> plug_version,
+                $in_footer = true
+            );
+
+            //SELECTER
+            wp_enqueue_style(
+                'fcz-selecter-style',
+                sprintf('%1$s/back/assets/css/selecter.min.css' , TC_FCZ_BASE_URL ),
+                array( 'customize-controls' ),
+                TC_font_customizer::$instance -> plug_version,
+                $media = 'all'
+            );
+            wp_enqueue_script(
+                'selecter-script',
+                //dev / debug mode mode?
+                sprintf('%1$s/back/assets/js/lib/lib_selecter.js' , TC_FCZ_BASE_URL ),
+                $deps = array('jquery'),
+                TC_font_customizer::$instance -> plug_version,
+                $in_footer = true
+            );
+
+            //STEPPER
+            wp_enqueue_style(
+                'fcz-stepper-style',
+                sprintf('%1$s/back/assets/css/stepper.min.css' , TC_FCZ_BASE_URL ),
+                array( 'customize-controls' ),
+                TC_font_customizer::$instance -> plug_version,
+                $media = 'all'
+            );
+            wp_enqueue_script(
+                'stepper-script',
+                //dev / debug mode mode?
+                sprintf('%1$s/back/assets/js/lib/lib_stepper.js' , TC_FCZ_BASE_URL ),
+                $deps = array('jquery'),
+                TC_font_customizer::$instance -> plug_version,
+                $in_footer = true
+            );
+        }//end of jquery plugin assets
 
 		wp_register_script( 
-			'require', 
-			$src = plugins_url( TC_PLUG_DIR_NAME . '/back/assets/js/require.js'), 
+            'require', 
+			sprintf('%1$s/back/assets/js/require.js', TC_FCZ_BASE_URL),
 			$deps = array('jquery'), 
 			null, 
 			$in_footer = true 
 		);
+		$_app_on_server				      = dirname(dirname(__FILE__)) . '/assets/js/require/app.js';
+        $_app_path 					      = file_exists($_app_on_server) ? sprintf('%1$s/back/assets/js/%2$s' , TC_FCZ_BASE_URL, 'require/app.js') : false;
 
 		wp_enqueue_script( 
-			'font-customizer-control',
-			//Are we in dev mode?
-			//$src = plugins_url( TC_PLUG_DIR_NAME . '/back/assets/js/require/app.js'), 
-			$src = plugins_url( TC_PLUG_DIR_NAME . '/back/assets/js/font-customizer-control.min.js'),
-			$deps = array('customize-controls' , 'require'), 
+            'font-customizer-control',
+			sprintf('%1$s/back/assets/js/font-customizer-control.min.js', TC_FCZ_BASE_URL ), 
+			$deps = array('customize-controls' , 'require', 'underscore'), 
 			null,
 			$in_footer = true
 		);
@@ -548,7 +604,7 @@ class TC_admin_font_customizer {
         $families   = get_option('tc_wfc_gfonts');
         $families = str_replace(",", "%2C", $families);
         $families_url   = "//fonts.googleapis.com/css?family={$families}";
-    	add_editor_style( array( $families_url , plugins_url( TC_PLUG_DIR_NAME . '/front/assets/css/dyn-style.php?is_customizing=false' ) ) );
+        add_editor_style( array( $families_url , sprintf('%s/front/assets/css/dyn-style.php?is_customizing=false' , TC_FCZ_BASE_URL ) ) );
     }
 
 

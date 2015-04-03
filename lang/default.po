@@ -1,15 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Unlimited FP\n"
-"POT-Creation-Date: 2014-07-02 18:36+0100\n"
-"PO-Revision-Date: 2014-07-02 18:36+0100\n"
-"Last-Translator: Nicolas <contact@themesandco.com>\n"
-"Language-Team: Nicolas G. <contact@themesandco.com>\n"
-"Language: Français\n"
+"POT-Creation-Date: 2015-03-22 10:29+0100\n"
+"PO-Revision-Date: 2015-03-22 10:29+0100\n"
+"Last-Translator: Rocco Aliberti\n"
+"Language-Team: Nicolas G. <contact@presscustomizr.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.10\n"
 "X-Poedit-KeywordsList: __;_e;_n\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -205,35 +204,35 @@ msgstr ""
 msgid "Neon white"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:483
+#: ../back/classes/class_admin_font_customizer.php:539
 msgid "Reset all"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:484
+#: ../back/classes/class_admin_font_customizer.php:540
 msgid "All settings reset to default"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:485
+#: ../back/classes/class_admin_font_customizer.php:541
 msgid "Are you sure you want to reset all your font settings to default?"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:486
+#: ../back/classes/class_admin_font_customizer.php:542
 #: ../back/classes/class_customizer_font_controls.php:66
 #: ../back/classes/class_customizer_font_controls.php:74
 msgid "Yes"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:487
+#: ../back/classes/class_admin_font_customizer.php:543
 #: ../back/classes/class_customizer_font_controls.php:67
 #: ../back/classes/class_customizer_font_controls.php:75
 msgid "No"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:557
+#: ../back/classes/class_admin_font_customizer.php:613
 msgid "Settings"
 msgstr ""
 
-#: ../back/classes/class_admin_font_customizer.php:558
+#: ../back/classes/class_admin_font_customizer.php:614
 msgid "System infos"
 msgstr ""
 
@@ -282,6 +281,25 @@ msgstr ""
 msgid ""
 "The <strong>%1$s</strong> plugin can not be used with a theme (or a parent "
 "theme) different than Customizr with a version less than v3.1.0."
+msgstr ""
+
+#: ../font-customizer.php:361
+msgid "in Wordpress Font Customizer plugin"
+msgstr ""
+
+#: ../font-customizer.php:362
+msgid "in this theme"
+msgstr ""
+
+#: ../font-customizer.php:367
+#, php-format
+msgid " Open the <a href=\"%s\">plugins page</a> to deactivate it."
+msgstr ""
+
+#: ../font-customizer.php:375
+#, php-format
+msgid ""
+"The <strong>%s</strong> plugin must be disabled since it is included %s.%s"
 msgstr ""
 
 #: ../utils/classes/class_utils_wfc.php:119
@@ -408,12 +426,12 @@ msgstr ""
 msgid "Footer credits"
 msgstr ""
 
-#: ../utils/classes/class_utils_wfc.php:276
+#: ../utils/classes/class_utils_wfc.php:277
 msgid "All subsets"
 msgstr ""
 
-#: ../utils/classes/class_utils_wfc.php:278
-#: ../utils/classes/class_utils_wfc.php:302
+#: ../utils/classes/class_utils_wfc.php:279
+#: ../utils/classes/class_utils_wfc.php:303
 msgid "fonts"
 msgstr ""
 

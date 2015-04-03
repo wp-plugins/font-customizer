@@ -57,20 +57,29 @@ class TC_front_font_customizer {
 
     /* PLUGIN FRONT END FUNCTIONS */
     function tc_enqueue_plug_resources() {
-        //WFC front scripts
-        wp_enqueue_script( 
-            'font-customizer-script' ,
-            plugins_url( TC_PLUG_DIR_NAME . '/front/assets/js/font-customizer-front.min.js'),
-            array(),
-            null ,
-            true
-        );
         wp_enqueue_style( 
           'font-customizer-style' ,
-          plugins_url( TC_PLUG_DIR_NAME . '/front/assets/css/font_customizer.min.css' ),
+          sprintf('%1$s/front/assets/css/font_customizer.min.css', TC_FCZ_BASE_URL ),
           array(), 
           TC_font_customizer::$instance -> plug_version,
           $media = 'all' 
+        );
+
+        //register and enqueue jQuery if necessary
+        if ( ! wp_script_is( 'jquery', $list = 'registered') ) {
+            wp_register_script('jquery', '//code.jquery.com/jquery-latest.min.js', array(), false, false );
+        }
+        if ( ! wp_script_is( 'jquery', $list = 'enqueued') ) {
+          wp_enqueue_script( 'jquery');
+        }
+
+        //WFC front scripts
+        wp_enqueue_script( 
+          'font-customizer-script' ,
+          sprintf('%1$s/front/assets/js/font-customizer-front.min.js', TC_FCZ_BASE_URL ),
+          array('jquery'),
+          TC_font_customizer::$instance -> plug_version,
+          true
         );
 
         //localize font-customizer-script with settings fonts

@@ -2,13 +2,13 @@
 /**
 * Add controls to the WP customizer
 *
-* 
+*
 * @package      Customizr
 * @subpackage   classes
 * @since        1.0
-* @author       Nicolas GUILLAUME <nicolas@themesandco.com>
+* @author       Nicolas GUILLAUME <nicolas@presscustomizr.com>
 * @copyright    Copyright (c) 2013, Nicolas GUILLAUME
-* @link         http://themesandco.com/customizr
+* @link         http://presscustomizr.com/customizr
 * @license      http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
 
@@ -78,14 +78,14 @@ class TC_font_controls extends WP_Customize_Control	{
 				?>
 			</li>
 		</ul><!-- tc-setting-title-wrapper -->
-		
+
 		<ul class="tc-accordion-section-content">
 			<?php
 			foreach ( TC_admin_font_customizer::$instance -> tc_control_tree as $section => $tc_settings ) {
 				//Special case for icon : don't show the section if empty
 				/*if ( isset($tc_settings['controls']['icon']) && false == $selector_settings[$this->selector]['icon'] )
 						continue;*/
-	
+
 				printf('<li class="tc-accordion-subsection %1$s"><h3>%2$s</h3><ul>%3$s</ul></li> ',
 					'tc-'.str_replace(' ', '-', strtolower ( $section )),
 					$tc_settings['title'],
